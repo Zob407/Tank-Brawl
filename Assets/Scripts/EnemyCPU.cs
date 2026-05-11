@@ -19,6 +19,10 @@ public class EnemyAI : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotationX | 
                          RigidbodyConstraints.FreezeRotationZ | 
                          RigidbodyConstraints.FreezePositionY;
+        if (GameObject.Find("PlayerTank") != null)
+        {
+            player = GameObject.Find("PlayerTank").transform;
+        }
     }
 
     void FixedUpdate()
@@ -52,6 +56,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (bulletPrefab == null || firePoint == null) return;
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        bullet.name = "EnemyBullet";
         Rigidbody bulletRb = bullet.GetComponent<Rigidbody>();
         bulletRb.linearVelocity = firePoint.forward * 20f;
         Destroy(bullet, 3f);

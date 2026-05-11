@@ -23,7 +23,7 @@ public class TankShoot : MonoBehaviour
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         rb.linearVelocity = firePoint.forward * bulletSpeed;
-
+        bullet.name = "PlayerBullet";
         Destroy(bullet, 3f); // auto destroy after 3 seconds
     }
 }
