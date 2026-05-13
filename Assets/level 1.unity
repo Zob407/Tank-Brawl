@@ -583,6 +583,9 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 1268417870}
+  hideHealthBarUntilClose: 0
+  healthBarObject: {fileID: 0}
+  showDistance: 15
 --- !u!1 &62382220 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 03d778fdca2c6864eb78cfb25bc938ef, type: 3}
@@ -3328,11 +3331,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf921f8f90e4f4ff583a3ca7243c17f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  player: {fileID: 0}
+  player: {fileID: 39417235}
   moveSpeed: 7
   turnSpeed: 80
-  shootRange: 25
+  wakeUpRange: 20
   stoppingDistance: 8
+  shootRange: 25
   fireRate: 0.8
   bulletPrefab: {fileID: 4117351389500557077, guid: 5715dfb74498a4ef8889d80e9f27ec4b, type: 3}
   firePoint: {fileID: 1616622552}
@@ -3355,6 +3359,9 @@ MonoBehaviour:
   maxHealth: 300
   currentHealth: 0
   healthBar: {fileID: 871511555}
+  hideHealthBarUntilClose: 1
+  healthBarObject: {fileID: 871511553}
+  showDistance: 15
 --- !u!1001 &2044433167
 PrefabInstance:
   m_ObjectHideFlags: 0
