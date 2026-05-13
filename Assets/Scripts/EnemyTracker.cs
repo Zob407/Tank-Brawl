@@ -1,66 +1,103 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
+using TMPro;
 
 public class EnemyTracker : MonoBehaviour
 {
-    public GameObject enemyIconPrefab;
-    public Transform iconContainer;
-    public Text tankCountText;
+    public static EnemyTracker instance;
 
-    private List<GameObject> enemies = new List<GameObject>();
-    private List<Slider> healthSliders = new List<Slider>();
-    private List<Image> iconImages = new List<Image>();
+    [Header("Enemies")]
+    public int enemiesAlive = 3;
+    public TextMeshProUGUI tanksLeftText;
+
+    [Header("Boss")]
+    public GameObject bossObject;
+    public Transform bossSpawnPoint;
+    public GameObject bossHealthBarObject;
+
+    private bool bossSpawned = false;
+
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
-        GameObject[] found = GameObject.FindGameObjectsWithTag("Enemy");
-        int tankNumber = 1;
-        foreach (GameObject enemy in found)
+        UpdateTanksLeftText();
+
+        if (bossObject != null)
         {
-            enemies.Add(enemy);
-
-            GameObject icon = Instantiate(enemyIconPrefab, iconContainer);
-            healthSliders.Add(icon.GetComponentInChildren<Slider>());
-            iconImages.Add(icon.GetComponent<Image>());
-
-            // Add label "TANK 1", "TANK 2", etc.
-            Text label = icon.GetComponentInChildren<Text>();
-            if (label != null)
-                label.text = "TANK " + tankNumber;
-
-            Health h = enemy.GetComponent<Health>();
-            if (h != null)
-                icon.GetComponentInChildren<Slider>().maxValue = h.maxHealth;
-
-            tankNumber++;
+            bossObject.SetActive(false);
         }
-        UpdateCount();
+
+        if (bossHealthBarObject != null)
+        {
+            bossHealthBarObject.SetActive(false);
+        }
     }
 
-    void Update()
+    public void EnemyDied()
     {
-        int alive = 0;
-        for (int i = 0; i < enemies.Count; i++)
+        enemiesAlive--;
+
+        if (enemiesAlive < 0)
         {
-            if (enemies[i] == null)
-            {
-                iconImages[i].color = new Color(0.3f, 0.3f, 0.3f, 0.5f);
-                healthSliders[i].value = 0;
-            }
-            else
-            {
-                alive++;
-                Health h = enemies[i].GetComponent<Health>();
-                if (h != null)
-                    healthSliders[i].value = h.currentHealth;
-            }
+            enemiesAlive = 0;
         }
-        tankCountText.text = "TANKS: " + alive;
+
+        UpdateTanksLeftText();
+
+        Debug.Log("Enemy died. Enemies left: " + enemiesAlive);
+
+        if (enemiesAlive <= 0 && !bossSpawned)
+        {
+            SpawnBoss();
+        }
     }
 
-    void UpdateCount()
+    void SpawnBoss()
     {
-        tankCountText.text = "TANKS: " + enemies.Count;
+        bossSpawned = true;
+
+        if (bossObject == null)
+        {
+            Debug.LogWarning("Boss Object is missing!");
+            return;
+        }
+
+        if (bossSpawnPoint != null)
+        {
+            bossObject.transform.position = bossSpawnPoint.position;
+            bossObject.transform.rotation = bossSpawnPoint.rotation;
+        }
+
+        bossObject.SetActive(true);
+
+        if (bossHealthBarObject != null)
+        {
+            bossHealthBarObject.SetActive(true);
+        }
+
+        Health bossHealth = bossObject.GetComponent<Health>();
+        if (bossHealth != null)
+        {
+            bossHealth.ResetHealth();
+        }
+
+        EnemyCPU bossAI = bossObject.GetComponent<EnemyCPU>();
+        if (bossAI != null)
+        {
+            bossAI.enabled = true;
+        }
+
+        Debug.Log("Boss spawned!");
+    }
+
+    void UpdateTanksLeftText()
+    {
+        if (tanksLeftText != null)
+        {
+            tanksLeftText.text = "Tanks Left: " + enemiesAlive;
+        }
     }
 }

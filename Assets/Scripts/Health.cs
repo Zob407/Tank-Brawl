@@ -29,6 +29,9 @@ public class Health : MonoBehaviour
     [Header("Score")]
     public int pointsOnDeath = 100;
 
+    [Header("Boss Spawn Tracking")]
+    public bool countsTowardBossSpawn = false;
+
     private Vector3 startPosition;
     private Quaternion startRotation;
     private Rigidbody rb;
@@ -115,7 +118,11 @@ public class Health : MonoBehaviour
 
         Debug.Log(gameObject.name + " healed: " + currentHealth);
     }
-
+     public void ResetHealth()
+    {
+    currentHealth = maxHealth;
+    UpdateHealthBar();
+    }
     void Die()
     {
         if (isPlayer)
@@ -127,6 +134,11 @@ public class Health : MonoBehaviour
             if (ScoreManager.instance != null)
             {
                 ScoreManager.instance.AddScore(pointsOnDeath);
+            }
+
+            if (countsTowardBossSpawn && EnemyTracker.instance != null)
+            {
+                EnemyTracker.instance.EnemyDied();
             }
 
             if (healthBarObject != null)
@@ -213,7 +225,7 @@ public class Health : MonoBehaviour
 
         Debug.Log("You Lose");
     }
-
+    
     void UpdateHealthBar()
     {
         if (healthBar != null)
