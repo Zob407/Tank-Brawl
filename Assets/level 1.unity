@@ -5906,7 +5906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 1
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -6139,7 +6139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 2
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -6270,7 +6270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 1
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -6465,7 +6465,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 1
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -6886,7 +6886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 1
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -12731,7 +12731,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 2
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -17855,7 +17855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 2
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
@@ -43808,7 +43808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe1bd816c4cc40a2b5f9d8f8caf308a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerUp
-  powerUpType: 0
+  powerUpType: 2
   healAmount: 50
   fasterFireRate: 0.2
   increasedDamage: 50
