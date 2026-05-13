@@ -11,7 +11,10 @@ public class Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         if (healthBar != null)
+        {
+            healthBar.maxValue = maxHealth;
             healthBar.value = currentHealth;
+        }
     }
 
     public void TakeDamage(float damage)
@@ -20,8 +23,6 @@ public class Health : MonoBehaviour
 
         if (healthBar != null)
             healthBar.value = currentHealth;
-
-        Debug.Log(gameObject.name + " health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
