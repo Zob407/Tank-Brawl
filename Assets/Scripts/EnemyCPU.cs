@@ -4,20 +4,15 @@ public class EnemyAI : MonoBehaviour
 {
     public Transform player;
 
-    [Header("Movement")]
     public float moveSpeed = 3f;
     public float turnSpeed = 120f;
-    public float wakeUpRange = 20f;
-    public float stoppingDistance = 8f;
-
-    [Header("Shooting")]
     public float shootRange = 15f;
+    public float stoppingDistance = 8f;
     public float fireRate = 2f;
+
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float bulletSpeed = 20f;
 
-    [Header("Obstacle Avoidance")]
     public LayerMask obstacleMask;
     public float detectDistance = 5f;
 
@@ -26,29 +21,24 @@ public class EnemyAI : MonoBehaviour
 
     private bool avoiding = false;
     private float avoidTimer = 0f;
-    private int turnDirection = 1;
+    private int turnDirection = 1; // 1 = right, -1 = left
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        if (rb != null)
+        rb.useGravity = true;
+        rb.isKinematic = false;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                         RigidbodyConstraints.FreezeRotationZ |
+                         RigidbodyConstraints.FreezePositionY;
+
+        if (GameObject.Find("PlayerTank") != null)
         {
-            rb.useGravity = true;
-            rb.isKinematic = false;
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
-
-            rb.constraints = RigidbodyConstraints.FreezeRotationX |
-                             RigidbodyConstraints.FreezeRotationZ |
-                             RigidbodyConstraints.FreezePositionY;
-        }
-
-        GameObject playerObj = GameObject.Find("PlayerTank");
-
-        if (playerObj != null)
-        {
-            player = playerObj.transform;
+            player = GameObject.Find("PlayerTank").transform;
         }
     }
 
@@ -57,12 +47,6 @@ public class EnemyAI : MonoBehaviour
         if (player == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Enemy sleeps until player is near
-        if (distanceToPlayer > wakeUpRange)
-        {
-            return;
-        }
 
         Vector3 rayOrigin = transform.position + Vector3.up * 0.7f;
 
@@ -73,10 +57,13 @@ public class EnemyAI : MonoBehaviour
             obstacleMask
         );
 
+        // If enemy sees wall, start avoiding
         if (obstacleAhead && !avoiding)
         {
             avoiding = true;
             avoidTimer = 1.2f;
+
+            // Randomly choose left or right
             turnDirection = Random.value > 0.5f ? 1 : -1;
         }
 
@@ -84,6 +71,7 @@ public class EnemyAI : MonoBehaviour
         {
             avoidTimer -= Time.fixedDeltaTime;
 
+            // Turn left/right
             Quaternion turnAmount = Quaternion.Euler(
                 0f,
                 turnDirection * turnSpeed * Time.fixedDeltaTime,
@@ -92,9 +80,11 @@ public class EnemyAI : MonoBehaviour
 
             rb.MoveRotation(rb.rotation * turnAmount);
 
+            // Move forward while avoiding
             Vector3 moveAmount = transform.forward * moveSpeed * Time.fixedDeltaTime;
             rb.MovePosition(rb.position + moveAmount);
 
+            // Stop avoiding after timer finishes
             if (avoidTimer <= 0f)
             {
                 avoiding = false;
@@ -102,7 +92,7 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Chase player
+            // Normal chase player
             Vector3 direction = player.position - transform.position;
             direction.y = 0f;
             direction.Normalize();
@@ -127,7 +117,7 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // Shoot only when player is close enough
+        // Shoot at player
         if (distanceToPlayer <= shootRange && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
@@ -135,26 +125,22 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-   void Shoot()
-{
-    if (bulletPrefab == null || firePoint == null) return;
-
-    GameObject bullet = Instantiate(
-        bulletPrefab,
-        firePoint.position,
-        firePoint.rotation
-    );
-
-    bullet.name = "EnemyBullet";
-
-    Bullet bulletScript = bullet.GetComponent<Bullet>();
-
-    if (bulletScript != null)
+    void Shoot()
     {
-        bulletScript.speed = bulletSpeed;
-        bulletScript.SetOwner(gameObject);
+        if (bulletPrefab == null || firePoint == null) return;
+
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        bullet.name = "EnemyBullet";
+
+        Rigidbody bulletRb = bullet.GetComponent<Rigidbody>();
+
+        if (bulletRb != null)
+        {
+            bulletRb.linearVelocity = firePoint.forward * 20f;
+        }
+
+        Destroy(bullet, 3f);
     }
-}
 
     void OnDrawGizmosSelected()
     {
@@ -162,11 +148,5 @@ public class EnemyAI : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawRay(rayOrigin, transform.forward * detectDistance);
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, wakeUpRange);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, shootRange);
     }
 }
