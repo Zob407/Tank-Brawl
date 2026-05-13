@@ -3,75 +3,88 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float damage = 25f;
-    
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    Debug.Log("This is the name of the tank that was shot: "+collision.gameObject.name);
-    //    Debug.Log("This is the name of the bullet: "+gameObject.name);
-    //    if (collision.gameObject.name == "EnemyTank" && gameObject.name == "TankBullet")
-    //    {
-    //        //Destroy(gameObject);
-    //        return;
-    //    }
-    //    else
-    //    {
-    //        Health health = collision.gameObject.GetComponent<Health>();
-    //        if (health != null)
-    //        {
-    //            health.TakeDamage(damage);
-    //        } 
-    //        Destroy(gameObject);
-    //    }
-    //}
-    private void OnTriggerEnter(Collider collision)
+    public float speed = 20f;
+    public float lifeTime = 3f;
+
+    private GameObject owner;
+    private bool alreadyHit = false;
+
+    public void SetOwner(GameObject newOwner)
     {
-        Debug.Log("This is the name of the tank that was shot: " + collision.gameObject.name);
-        Debug.Log("This is the name of the bullet: " + gameObject.name);
-        if (collision.gameObject.name == "EnemyTank" && gameObject.name == "PlayerBullet")
+        owner = newOwner;
+
+        Collider bulletCollider = GetComponent<Collider>();
+
+        if (owner != null && bulletCollider != null)
         {
-            Health health = collision.gameObject.GetComponent<Health>();//Get the health component of the enemy
-            if (health != null)
+            Collider[] ownerColliders = owner.GetComponentsInChildren<Collider>();
+
+            foreach (Collider ownerCollider in ownerColliders)
             {
-                health.TakeDamage(damage);//Apply the game of the player to the enemy tank
+                Physics.IgnoreCollision(bulletCollider, ownerCollider, true);
             }
-            Destroy(gameObject);
         }
-        else if (collision.gameObject.name == "PlayerTank" && gameObject.name == "EnemyBullet")
+    }
+
+    void Start()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
         {
-            Health health = collision.gameObject.GetComponent<Health>();//Get the health component of the player
-            if (health != null)
-            {
-                health.TakeDamage(damage);//Apply the game of the enemy to the player tank
-            }
-            Destroy(gameObject);
+            rb.useGravity = false;
+            rb.isKinematic = false;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.linearVelocity = transform.forward * speed;
         }
-        //if (collision.gameObject.name == "EnemyTank" && gameObject.name == "EnemyBullet")
-        //{
-        //    //Destroy(gameObject);
-        //    return;
-        //}
-        //else
-        //{
-        //    Health health = collision.gameObject.GetComponent<Health>();
-        //    if (health != null)
-        //    {
-        //        health.TakeDamage(damage);
-        //    }
-        //    Destroy(gameObject);
-        //}
-        //if (collision.gameObject.name == "PlayerTank" && gameObject.name == "PlayerBullet")
-        //{
-        //    //Destroy(gameObject);
-        //    return;
-        //}
-        //else
-        //{
-        //    Health health = collision.gameObject.GetComponent<Health>();
-        //    if (health != null)
-        //    {
-        //        health.TakeDamage(damage);
-        //    }
-        //    Destroy(gameObject);
-        //}
+
+        Destroy(gameObject, lifeTime);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        TryHit(other.gameObject);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        TryHit(collision.gameObject);
+    }
+
+    void TryHit(GameObject hitObject)
+    {
+        if (alreadyHit) return;
+
+        if (owner != null)
+        {
+            if (hitObject == owner)
+            {
+                return;
+            }
+
+            if (hitObject.transform.IsChildOf(owner.transform))
+            {
+                return;
+            }
+        }
+
+        Health health = hitObject.GetComponent<Health>();
+
+        if (health == null)
+        {
+            health = hitObject.GetComponentInParent<Health>();
+        }
+
+        if (health != null)
+        {
+            alreadyHit = true;
+            health.TakeDamage(damage);
+            Debug.Log("Bullet damaged: " + health.gameObject.name);
+            Destroy(gameObject);
+            return;
+        }
+
+        alreadyHit = true;
+        Destroy(gameObject);
     }
 }

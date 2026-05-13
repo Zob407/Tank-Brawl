@@ -28,7 +28,6 @@ public class Health : MonoBehaviour
 
     void Start()
     {
-        // Makes sure the game is unpaused when the scene starts
         if (isPlayer)
         {
             Time.timeScale = 1f;
@@ -67,6 +66,16 @@ public class Health : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public void Heal(float healAmount)
+    {
+        currentHealth += healAmount;
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+
+        UpdateHealthBar();
+
+        Debug.Log(gameObject.name + " healed: " + currentHealth);
     }
 
     void Die()
@@ -152,7 +161,6 @@ public class Health : MonoBehaviour
             shoot.enabled = false;
         }
 
-        // Freeze the whole game so enemies stop moving/shooting
         Time.timeScale = 0f;
 
         Debug.Log("You Lose");
