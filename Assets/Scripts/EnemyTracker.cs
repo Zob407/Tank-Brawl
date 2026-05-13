@@ -73,11 +73,6 @@ public class EnemyTracker : MonoBehaviour
 
         bossObject.SetActive(true);
 
-        if (bossHealthBarObject != null)
-        {
-            bossHealthBarObject.SetActive(true);
-        }
-
         Health bossHealth = bossObject.GetComponent<Health>();
         if (bossHealth != null)
         {
@@ -88,9 +83,22 @@ public class EnemyTracker : MonoBehaviour
         if (bossAI != null)
         {
             bossAI.enabled = true;
+
+            GameObject playerObj = GameObject.Find("PlayerTank");
+            if (playerObj != null)
+            {
+                bossAI.player = playerObj.transform;
+            }
+
+            bossAI.wakeUpRange = 999f;
         }
 
-        Debug.Log("Boss spawned!");
+        if (bossHealthBarObject != null)
+        {
+            bossHealthBarObject.SetActive(true);
+        }
+
+        Debug.Log("Boss spawned and AI activated!");
     }
 
     void UpdateTanksLeftText()
