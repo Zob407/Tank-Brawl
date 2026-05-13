@@ -21,10 +21,19 @@ public class Health : MonoBehaviour
     [Header("Respawn")]
     public Transform respawnPoint;
 
+    [Header("Enemy Health Bar Settings")]
+    public bool hideHealthBarUntilClose = false;
+    public GameObject healthBarObject;
+    public float showDistance = 15f;
+
+    [Header("Score")]
+    public int pointsOnDeath = 100;
+
     private Vector3 startPosition;
     private Quaternion startRotation;
     private Rigidbody rb;
     private bool gameOver = false;
+    private Transform player;
 
     void Start()
     {
@@ -44,13 +53,42 @@ public class Health : MonoBehaviour
             startRotation = transform.rotation;
         }
 
+        GameObject playerObj = GameObject.Find("PlayerTank");
+
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+
         if (youLoseObject != null)
         {
             youLoseObject.SetActive(false);
         }
 
+        if (hideHealthBarUntilClose && healthBarObject != null)
+        {
+            healthBarObject.SetActive(false);
+        }
+
         UpdateHealthBar();
         UpdateLivesText();
+    }
+
+    void Update()
+    {
+        if (!hideHealthBarUntilClose) return;
+        if (player == null || healthBarObject == null) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer <= showDistance && currentHealth > 0)
+        {
+            healthBarObject.SetActive(true);
+        }
+        else
+        {
+            healthBarObject.SetActive(false);
+        }
     }
 
     public void TakeDamage(float damage)
@@ -86,6 +124,16 @@ public class Health : MonoBehaviour
         }
         else
         {
+            if (ScoreManager.instance != null)
+            {
+                ScoreManager.instance.AddScore(pointsOnDeath);
+            }
+
+            if (healthBarObject != null)
+            {
+                healthBarObject.SetActive(false);
+            }
+
             Destroy(gameObject);
         }
     }
