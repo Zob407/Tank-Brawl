@@ -15,6 +15,7 @@ public class EnemyAI : MonoBehaviour
     public float fireRate = 2f;
     public GameObject bulletPrefab;
     public Transform firePoint;
+    public float bulletSpeed = 20f;
 
     [Header("Obstacle Avoidance")]
     public LayerMask obstacleMask;
@@ -31,14 +32,17 @@ public class EnemyAI : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        rb.useGravity = true;
-        rb.isKinematic = false;
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        if (rb != null)
+        {
+            rb.useGravity = true;
+            rb.isKinematic = false;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        rb.constraints = RigidbodyConstraints.FreezeRotationX |
-                         RigidbodyConstraints.FreezeRotationZ |
-                         RigidbodyConstraints.FreezePositionY;
+            rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                             RigidbodyConstraints.FreezeRotationZ |
+                             RigidbodyConstraints.FreezePositionY;
+        }
 
         GameObject playerObj = GameObject.Find("PlayerTank");
 
@@ -54,7 +58,7 @@ public class EnemyAI : MonoBehaviour
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Enemy sleeps until player is close
+        // Enemy sleeps until player is near
         if (distanceToPlayer > wakeUpRange)
         {
             return;
@@ -98,6 +102,7 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
+            // Chase player
             Vector3 direction = player.position - transform.position;
             direction.y = 0f;
             direction.Normalize();
@@ -122,7 +127,7 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // Enemy only shoots when player is close enough
+        // Shoot only when player is close enough
         if (distanceToPlayer <= shootRange && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
@@ -130,22 +135,26 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    void Shoot()
+   void Shoot()
+{
+    if (bulletPrefab == null || firePoint == null) return;
+
+    GameObject bullet = Instantiate(
+        bulletPrefab,
+        firePoint.position,
+        firePoint.rotation
+    );
+
+    bullet.name = "EnemyBullet";
+
+    Bullet bulletScript = bullet.GetComponent<Bullet>();
+
+    if (bulletScript != null)
     {
-        if (bulletPrefab == null || firePoint == null) return;
-
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        bullet.name = "EnemyBullet";
-
-        Rigidbody bulletRb = bullet.GetComponent<Rigidbody>();
-
-        if (bulletRb != null)
-        {
-            bulletRb.linearVelocity = firePoint.forward * 20f;
-        }
-
-        Destroy(bullet, 3f);
+        bulletScript.speed = bulletSpeed;
+        bulletScript.SetOwner(gameObject);
     }
+}
 
     void OnDrawGizmosSelected()
     {

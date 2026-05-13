@@ -4,14 +4,15 @@ public class TankShoot : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public Transform firePoint;
+
     public float bulletSpeed = 20f;
     public float fireRate = 0.5f;
 
-    private float nextFireTime = 0f;
+    private float nextFireTime;
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireRate;
             Shoot();
@@ -20,13 +21,25 @@ public class TankShoot : MonoBehaviour
 
     void Shoot()
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();
-        rb.linearVelocity = firePoint.forward * bulletSpeed;
+        if (bulletPrefab == null || firePoint == null) return;
+
+        // Spawn bullet slightly in front of FirePoint so it does not touch player
+        Vector3 spawnPosition = firePoint.position + firePoint.forward * 1.5f;
+
+        GameObject bullet = Instantiate(
+            bulletPrefab,
+            spawnPosition,
+            firePoint.rotation
+        );
+
         bullet.name = "PlayerBullet";
-        Destroy(bullet, 3f); // auto destroy after 3 seconds
+
+        Bullet bulletScript = bullet.GetComponent<Bullet>();
+
+        if (bulletScript != null)
+        {
+            bulletScript.speed = bulletSpeed;
+            bulletScript.SetOwner(gameObject);
+        }
     }
 }
-
-
-
