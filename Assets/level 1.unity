@@ -334,6 +334,7 @@ GameObject:
   - component: {fileID: 39417230}
   - component: {fileID: 39417236}
   - component: {fileID: 39417237}
+  - component: {fileID: 39417238}
   m_Layer: 0
   m_Name: PlayerTank
   m_TagString: Player
@@ -515,6 +516,25 @@ MonoBehaviour:
   livesText: {fileID: 1062712784}
   youLoseObject: {fileID: 201410202}
   respawnPoint: {fileID: 0}
+--- !u!114 &39417238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39417229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07ae7101aaaf2415bbabff6ddae2a761, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSkin
+  tankRenderer: {fileID: 28637204091772100}
+  tankSkins:
+  - {fileID: 2100000, guid: 40e5949ee80704e468b44c78e6c40a82, type: 2}
+  - {fileID: 2100000, guid: 6cdca9a0b05da412aa95036a50cbbbb4, type: 2}
+  - {fileID: 2100000, guid: 78d41c31401f349a2a549d5af6b2c8c1, type: 2}
+  - {fileID: 2100000, guid: ff5d059914e8d4c49b952081685b1268, type: 2}
+  - {fileID: 2100000, guid: 9729ed9dbd7ad4ed1b7ef75d24d015d2, type: 2}
 --- !u!1 &62382220 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 03d778fdca2c6864eb78cfb25bc938ef, type: 3}
