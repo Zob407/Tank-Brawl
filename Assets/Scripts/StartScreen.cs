@@ -2,23 +2,51 @@ using UnityEngine;
 
 public class StartScreen : MonoBehaviour
 {
-    public GameObject startPanel;
+    public GameObject mainPanel;
+    public GameObject controlsPanel;
+    public GameObject objectivePanel;
     private float timer = 0f;
 
     void Start()
-    {
-        Time.timeScale = 0f;
-        startPanel.SetActive(true);
-    }
+{
+    Time.timeScale = 0f;
+    mainPanel.SetActive(true);
+    controlsPanel.SetActive(false);
+    objectivePanel.SetActive(false);
+}
 
     void Update()
-    {
-        timer += Time.unscaledDeltaTime;
+{
+    Time.timeScale = mainPanel.activeSelf ? 0f : 1f;
+    timer += Time.unscaledDeltaTime;
+}
 
-        if (timer > 1f && startPanel.activeSelf && Input.anyKeyDown)
-        {
-            startPanel.SetActive(false);
-            Time.timeScale = 1f;
-        }
+    public void ShowControls()
+    {
+        mainPanel.SetActive(false);
+        controlsPanel.SetActive(true);
+        objectivePanel.SetActive(false);
+    }
+
+    public void ShowObjective()
+    {
+        mainPanel.SetActive(false);
+        controlsPanel.SetActive(false);
+        objectivePanel.SetActive(true);
+    }
+
+    public void Back()
+    {
+        mainPanel.SetActive(true);
+        controlsPanel.SetActive(false);
+        objectivePanel.SetActive(false);
+    }
+
+    public void StartGame()
+    {
+        mainPanel.SetActive(false);
+        controlsPanel.SetActive(false);
+        objectivePanel.SetActive(false);
+        Time.timeScale = 1f;
     }
 }

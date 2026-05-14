@@ -1,44 +1,31 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    [Header("Panels")]
-    public GameObject skinPanel;
+    public GameObject controlsPanel;
+    public GameObject objectivePanel;
 
-    [Header("High Score")]
-    public TextMeshProUGUI highScoreText;
-
-    public void StartGame()
+    public void PlayGame()
     {
-        Time.timeScale = 1f;
         SceneManager.LoadScene("level 1");
     }
 
-    public void ShowHighScore()
+    public void ShowControls()
     {
-        int highScore = PlayerPrefs.GetInt("HighScore", 0);
-
-        if (highScoreText != null)
-        {
-            highScoreText.text = "High Score: " + highScore;
-        }
+        controlsPanel.SetActive(true);
+        objectivePanel.SetActive(false);
     }
 
-    public void OpenSkinPanel()
+    public void ShowObjective()
     {
-        if (skinPanel != null)
-        {
-            skinPanel.SetActive(true);
-        }
+        objectivePanel.SetActive(true);
+        controlsPanel.SetActive(false);
     }
 
-    public void CloseSkinPanel()
+    public void Back()
     {
-        if (skinPanel != null)
-        {
-            skinPanel.SetActive(false);
-        }
+        controlsPanel.SetActive(false);
+        objectivePanel.SetActive(false);
     }
 }
