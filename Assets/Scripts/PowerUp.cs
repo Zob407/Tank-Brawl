@@ -11,6 +11,10 @@ public class PowerUp : MonoBehaviour
 
     public PowerUpType powerUpType;
 
+    [Header("Sound")]
+    public AudioClip pickupSound;
+    public float pickupVolume = 1f;
+
     [Header("Health Power-Up")]
     public float healAmount = 50f;
 
@@ -21,12 +25,13 @@ public class PowerUp : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Powerup touched by: " + other.name);
+
         if (!other.CompareTag("Player")) return;
 
         if (powerUpType == PowerUpType.Health)
         {
             Health health = other.GetComponent<Health>();
-
             if (health != null)
             {
                 health.Heal(healAmount);
@@ -36,7 +41,6 @@ public class PowerUp : MonoBehaviour
         if (powerUpType == PowerUpType.FasterShooting)
         {
             TankShoot shoot = other.GetComponent<TankShoot>();
-
             if (shoot != null)
             {
                 shoot.FasterShooting(fasterFireRate, duration);
@@ -46,11 +50,19 @@ public class PowerUp : MonoBehaviour
         if (powerUpType == PowerUpType.MoreDamage)
         {
             TankShoot shoot = other.GetComponent<TankShoot>();
-
             if (shoot != null)
             {
                 shoot.IncreaseDamage(increasedDamage, duration);
             }
+        }
+
+        if (pickupSound != null)
+        {
+            AudioSource.PlayClipAtPoint(pickupSound, Camera.main.transform.position, pickupVolume);
+        }
+        else
+        {
+            Debug.LogWarning("No pickup sound assigned.");
         }
 
         Destroy(gameObject);
